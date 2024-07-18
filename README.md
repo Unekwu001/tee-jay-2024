@@ -12,3 +12,12 @@ Features
 5. **Travel and Accommodation Info**: Helpful information for out-of-town guests, including travel tips and accommodation recommendations.
 6. **Push Notifications**: Timely updates and reminders about upcoming events and important announcements.
 7. **Contact Information**: Easy access to contact details for the wedding planners and support.
+8. **View family and frineds Pictures**: As the heading implies.
+9. Invitees should have designations.
+10. Create an Admin page to manages all sent invites.
+11. Generate token for Invitees.
+12. Implement background job to delete all inactive invites.
+13. Pictures upload should go to azure blob or s3 bucket.
+14. Integrate with google maps so invitees can locate the venue.
+15. CRUD operation for guests.
+16. 
