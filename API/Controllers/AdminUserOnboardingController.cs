@@ -49,7 +49,7 @@ namespace WebAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while onboarding admin user: {Email}", adminUserDto.Email);
-                return StatusCode(500, "An internal server error occurred.");
+                return StatusCode(500, "An internal server error occurred. Please try again later");
             }
         }
     }
