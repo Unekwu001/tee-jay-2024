@@ -20,10 +20,10 @@ namespace TeeJay
             builder.Host.UseSerilog((context, LoggerConfig) => LoggerConfig.ReadFrom.Configuration(context.Configuration));
             builder.Services.AddScoped<IAdminUserService, AdminUserService>();
             builder.Services.AddControllers();
-            builder.Services.AddIdentity<AdminUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>()
+            builder.Services.AddIdentity<AdminUser, IdentityRole>().AddEntityFrameworkStores<TeejayDbContext>()
                             .AddDefaultTokenProviders();
             var connectionString = builder.Configuration.GetConnectionString("TeeJayConnection");
-            object value = builder.Services.AddDbContext<AppDbContext>(options =>
+            object value = builder.Services.AddDbContext<TeejayDbContext>(options =>
                 options.UseSqlServer(connectionString));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

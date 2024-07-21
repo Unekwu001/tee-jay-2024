@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Data.AppDbContext
 {
-    public class AppDbContext : IdentityDbContext<AdminUser>
+    public class TeejayDbContext : IdentityDbContext<AdminUser>
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        public TeejayDbContext(DbContextOptions<TeejayDbContext> options) : base(options)
         {
         }
 
