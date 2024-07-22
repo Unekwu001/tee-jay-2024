@@ -3,7 +3,6 @@ using Data.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
@@ -21,36 +20,36 @@ namespace WebAPI.Controllers
             _logger = logger;
         }
 
-        [HttpPost("onboard-admin-user")]
-        public async Task<IActionResult> OnboardAdmin([FromBody] AdminUserDto adminUserDto)
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateAdminUser([FromBody] AdminUserDto adminUserDto)
         {
             if (adminUserDto == null)
             {
-                _logger.LogWarning("Received a null AdminUserDto.");
-                return BadRequest("Admin user data is null.");
+                _logger.LogWarning("AdminUserDto is null.");
+                return BadRequest("Admin user data cannot be null.");
             }
 
             try
             {
-                var result = await _adminUserService.OnboardAdminAsync(adminUserDto);
+                var result = await _adminUserService.CreateAdminAsync(adminUserDto);
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("Admin user onboarded successfully: {Email}", adminUserDto.Email);
-                    return Ok("Admin user onboarded successfully.");
+                    return Ok("Admin user created successfully.");
                 }
                 else
                 {
                     var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                    _logger.LogWarning("Failed to onboard admin user: {Email}. Errors: {Errors}", adminUserDto.Email, errors);
-                    return BadRequest($"Failed to onboard admin user: {errors}");
+                    _logger.LogWarning("Failed to create admin user. Errors: {Errors}", errors);
+                    return BadRequest(errors);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while onboarding admin user: {Email}", adminUserDto.Email);
-                return StatusCode(500, "An internal server error occurred. Please try again later");
+                _logger.LogError(ex, "An error occurred while creating the admin user.");
+                return StatusCode(500, "Internal server error. Please try again later.");
             }
         }
     }
 }
+

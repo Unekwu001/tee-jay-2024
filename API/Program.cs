@@ -1,5 +1,7 @@
 
 using Core.AdminUserServices;
+using Core.AdminUserServices.AdminCreationServices;
+using Core.AdminUserServices.RoleManagementServices;
 using Data.AppDbContext;
 using Data.Models;
 using Microsoft.AspNetCore.Identity;
@@ -18,7 +20,9 @@ namespace TeeJay
 
             // Add services to the container.
             builder.Host.UseSerilog((context, LoggerConfig) => LoggerConfig.ReadFrom.Configuration(context.Configuration));
+            builder.Services.AddScoped<IAdminCreationService, AdminCreationService>();
             builder.Services.AddScoped<IAdminUserService, AdminUserService>();
+            builder.Services.AddScoped<IRoleManagementService, RoleManagementService>();
             builder.Services.AddControllers();
             builder.Services.AddIdentity<AdminUser, IdentityRole>().AddEntityFrameworkStores<TeejayDbContext>()
                             .AddDefaultTokenProviders();

@@ -1,4 +1,6 @@
-﻿using Data.Dtos;
+﻿using Core.AdminUserServices.AdminCreationServices;
+using Core.AdminUserServices.RoleManagementServices;
+using Data.Dtos;
 using Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -9,18 +11,18 @@ namespace Core.AdminUserServices
 {
     public class AdminUserService : IAdminUserService
     {
-        private readonly UserManager<AdminUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IAdminCreationService _adminCreationService;
+        private readonly IRoleManagementService _roleManagementService;
         private readonly ILogger<AdminUserService> _logger;
 
-        public AdminUserService(UserManager<AdminUser> userManager, RoleManager<IdentityRole> roleManager, ILogger<AdminUserService> logger)
+        public AdminUserService(IAdminCreationService userCreationService,IRoleManagementService roleManagementService,ILogger<AdminUserService> logger)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _adminCreationService = userCreationService;
+            _roleManagementService = roleManagementService;
             _logger = logger;
         }
 
-        public async Task<IdentityResult> OnboardAdminAsync(AdminUserDto adminUserDto)
+        public async Task<IdentityResult> CreateAdminAsync(AdminUserDto adminUserDto)
         {
             if (adminUserDto == null)
             {
@@ -38,27 +40,15 @@ namespace Core.AdminUserServices
 
             try
             {
-                var result = await _userManager.CreateAsync(adminUser, adminUserDto.Password);
+                var result = await _adminCreationService.CreateAdminUserAsync(adminUser, adminUserDto.Password);
 
                 if (result.Succeeded)
                 {
-                    if (!await _roleManager.RoleExistsAsync(adminUser.Role.ToString()))
-                    {
-                        var roleResult = await _roleManager.CreateAsync(new IdentityRole(adminUser.Role.ToString()));
-                        if (!roleResult.Succeeded)
-                        {
-                            var roleErrors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
-                            _logger.LogWarning("Failed to create role '{Role}'. Errors: {Errors}", adminUser.Role, roleErrors);
-                            return IdentityResult.Failed(roleResult.Errors.ToArray());
-                        }
-                    }
+                    var roleResult = await _roleManagementService.AssignRoleAsync(adminUser);
 
-                    var addToRoleResult = await _userManager.AddToRoleAsync(adminUser, adminUser.Role.ToString());
-                    if (!addToRoleResult.Succeeded)
+                    if (!roleResult.Succeeded)
                     {
-                        var roleErrors = string.Join(", ", addToRoleResult.Errors.Select(e => e.Description));
-                        _logger.LogWarning("Failed to assign role '{Role}' to user '{Email}'. Errors: {Errors}", adminUser.Role, adminUser.Email, roleErrors);
-                        return IdentityResult.Failed(addToRoleResult.Errors.ToArray());
+                        return IdentityResult.Failed(roleResult.Errors.ToArray());
                     }
 
                     _logger.LogInformation("Admin user '{Email}' onboarded successfully with role '{Role}'.", adminUser.Email, adminUser.Role);
@@ -74,7 +64,7 @@ namespace Core.AdminUserServices
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while onboarding admin user '{Email}'.", adminUser.Email);
-                throw; /// Re-throw the exception to ensure it is handled by the caller if necessary
+                throw; // Re-throw the exception to ensure it is handled by the caller if necessary
             }
         }
     }
