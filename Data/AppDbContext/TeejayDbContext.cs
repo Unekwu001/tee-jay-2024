@@ -15,5 +15,13 @@ namespace Data.AppDbContext
         {
         }
 
+        public DbSet<WeddingAttendants> WeddingAttendants { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            
+        }
+
     }
 }
