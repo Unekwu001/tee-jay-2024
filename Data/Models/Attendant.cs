@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Data.Models
 {
-    public class WeddingAttendants
+    public class Attendant
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

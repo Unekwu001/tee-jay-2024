@@ -22,7 +22,7 @@ namespace TeeJay
             builder.Host.UseSerilog((context, LoggerConfig) => LoggerConfig.ReadFrom.Configuration(context.Configuration));
             builder.Services.AddScoped<IAdminCreationService, AdminCreationService>();
             builder.Services.AddScoped<IAdminUserService, AdminUserService>();
-            builder.Services.AddScoped<IRoleManagementService, RoleManagementService>();
+            builder.Services.AddScoped<IAdminRoleManagementService, AdminRoleManagementService>();
             builder.Services.AddControllers();
             builder.Services.AddIdentity<AdminUser, IdentityRole>().AddEntityFrameworkStores<TeejayDbContext>()
                             .AddDefaultTokenProviders();

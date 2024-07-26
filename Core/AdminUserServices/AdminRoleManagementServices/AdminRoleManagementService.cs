@@ -6,20 +6,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Core.AdminUserServices.RoleManagementServices.RoleManagementService;
+using static Core.AdminUserServices.RoleManagementServices.AdminRoleManagementService;
 
 namespace Core.AdminUserServices.RoleManagementServices
 {
-    public class RoleManagementService : IRoleManagementService
+    public class AdminRoleManagementService : IAdminRoleManagementService
     {
         private readonly UserManager<AdminUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly ILogger<RoleManagementService> _logger;
+        private readonly ILogger<AdminRoleManagementService> _logger;
 
-        public RoleManagementService(
+        public AdminRoleManagementService(
             UserManager<AdminUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            ILogger<RoleManagementService> logger)
+            ILogger<AdminRoleManagementService> logger)
         {
             _userManager = userManager;
             _roleManager = roleManager;

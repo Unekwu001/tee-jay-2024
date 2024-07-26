@@ -12,10 +12,10 @@ namespace Core.AdminUserServices
     public class AdminUserService : IAdminUserService
     {
         private readonly IAdminCreationService _adminCreationService;
-        private readonly IRoleManagementService _roleManagementService;
+        private readonly IAdminRoleManagementService _roleManagementService;
         private readonly ILogger<AdminUserService> _logger;
 
-        public AdminUserService(IAdminCreationService userCreationService,IRoleManagementService roleManagementService,ILogger<AdminUserService> logger)
+        public AdminUserService(IAdminCreationService userCreationService,IAdminRoleManagementService roleManagementService,ILogger<AdminUserService> logger)
         {
             _adminCreationService = userCreationService;
             _roleManagementService = roleManagementService;

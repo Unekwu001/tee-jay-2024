@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Core.AdminUserServices.RoleManagementServices
 {
-    public interface IRoleManagementService
+    public interface IAdminRoleManagementService
     {
         Task<IdentityResult> AssignRoleAsync(AdminUser adminUser);
     }
