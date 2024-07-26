@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Core.AttendantUserServices.AttendantCreationServices
 {
-    public class AttendantCreationService
+    public class AttendantCreationService : IAttendantCreationService
     {
         private readonly UserManager<Attendant> _userManager;
         private readonly ILogger<AttendantCreationService> _logger;
