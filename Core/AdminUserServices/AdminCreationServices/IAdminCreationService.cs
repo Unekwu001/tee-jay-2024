@@ -11,7 +11,6 @@ namespace Core.AdminUserServices.AdminCreationServices
 {
     public interface IAdminCreationService
     {
-        //Task CreateAdminAsync(AdminUserDto adminUserDto);
-        Task<IdentityResult> CreateAdminUserAsync(AdminUser adminUser, string password);
+        Task<IdentityResult> CreateUserAsync(AdminUserDto adminUserDto);
     }
 }

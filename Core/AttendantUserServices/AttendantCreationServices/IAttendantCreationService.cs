@@ -1,10 +1,11 @@
-﻿using Data.Models;
+﻿using Data.Dtos;
+using Data.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Core.AttendantUserServices.AttendantCreationServices
 {
     public interface IAttendantCreationService
     {
-        Task<IdentityResult> CreateAttendantUserAsync(Attendant attendant, string password);
+        Task<IdentityResult> CreateAttendantAsync(AttendantDto attendantDto);
     }
 }

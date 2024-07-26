@@ -1,4 +1,7 @@
-﻿using Data.Models;
+﻿using AutoMapper;
+using Data.Dtos;
+using Data.Enums;
+using Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,6 +18,7 @@ namespace Core.AdminUserServices.RoleManagementServices
         private readonly UserManager<AdminUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<AdminRoleManagementService> _logger;
+        private readonly IMapper _mapper;
 
         public AdminRoleManagementService(
             UserManager<AdminUser> userManager,
@@ -26,28 +30,49 @@ namespace Core.AdminUserServices.RoleManagementServices
             _logger = logger;
         }
 
-        public async Task<IdentityResult> AssignRoleAsync(AdminUser adminUser)
+        public async Task<IdentityResult> AssignRoleAsync(AdminUserDto adminUserDto)
         {
-            if (!await _roleManager.RoleExistsAsync(adminUser.Role.ToString()))
+            // Retrieve roles from UserRole enum
+            string[] roles = Enum.GetNames(typeof(UserRole));
+
+            // Create roles if they do not exist
+            IdentityResult roleResult = IdentityResult.Success;
+            foreach (var role in roles)
             {
-                var roleResult = await _roleManager.CreateAsync(new IdentityRole(adminUser.Role.ToString()));
-                if (!roleResult.Succeeded)
+                if (!await _roleManager.RoleExistsAsync(role))
                 {
-                    var roleErrors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
-                    _logger.LogWarning("Failed to create role '{Role}'. Errors: {Errors}", adminUser.Role, roleErrors);
-                    return IdentityResult.Failed(roleResult.Errors.ToArray());
+                    roleResult = await _roleManager.CreateAsync(new IdentityRole(role));
+                    if (!roleResult.Succeeded)
+                    {
+                        var roleErrors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+                        _logger.LogWarning("Failed to create role '{Role}'. Errors: {Errors}", role, roleErrors);
+                        return IdentityResult.Failed(roleResult.Errors.ToArray());
+                    }
                 }
             }
-
-            var addToRoleResult = await _userManager.AddToRoleAsync(adminUser, adminUser.Role.ToString());
+            // Map AdminUserDto to AdminUser
+            var adminUser = _mapper.Map<AdminUser>(adminUserDto);
+            
+            // Assign the role to the user
+            var addToRoleResult = await _userManager.AddToRoleAsync(adminUser, adminUserDto.Role.ToString());
             if (!addToRoleResult.Succeeded)
             {
                 var roleErrors = string.Join(", ", addToRoleResult.Errors.Select(e => e.Description));
-                _logger.LogWarning("Failed to assign role '{Role}' to user '{Email}'. Errors: {Errors}", adminUser.Role, adminUser.Email, roleErrors);
+                _logger.LogWarning("Failed to assign role '{Role}' to user '{Email}'. Errors: {Errors}", adminUserDto.Role, adminUserDto.Email, roleErrors);
                 return IdentityResult.Failed(addToRoleResult.Errors.ToArray());
             }
 
             return IdentityResult.Success;
         }
-    } 
+
+    }
 }
+
+
+            // Retrieve the user from the database (you may need to adjust this based on your actual implementation)
+            //var adminUser = await _userManager.FindByEmailAsync(adminUserDto.Email);
+            //if (adminUser == null)
+            //{
+            //    _logger.LogWarning("User with email '{Email}' not found.", adminUserDto.Email);
+            //    return IdentityResult.Failed(new IdentityError { Description = "User not found" });
+            //}

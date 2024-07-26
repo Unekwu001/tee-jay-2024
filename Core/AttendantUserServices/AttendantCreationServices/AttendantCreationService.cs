@@ -1,4 +1,5 @@
-﻿using Data.Models;
+﻿using Data.Dtos;
+using Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
@@ -20,15 +21,43 @@ namespace Core.AttendantUserServices.AttendantCreationServices
             _logger = logger;
         }
 
-        public async Task<IdentityResult> CreateAttendantUserAsync(Attendant attendant, string password)
+        //public async Task<IdentityResult> CreateAttendantUserAsync(Attendant attendant, string password)
+        //{
+        //    var result = await _userManager.CreateAsync(attendant);
+        //    if (!result.Succeeded)
+        //    {
+        //        var errors = string.Join(",", result.Errors.Select(e => e.Description));
+        //        _logger.LogError($"Failed to create {attendant.Email}, Errors:{errors}");
+        //    }
+        //    return result;
+        //}
+
+        public async Task<IdentityResult> CreateAttendantAsync(AttendantDto attendantDto)
         {
-            var result = await _userManager.CreateAsync(attendant);
+            var user = new Attendant
+            {
+                FirstName = attendantDto.FirstName,
+                LastName = attendantDto.LastName,
+                UserName = attendantDto.Email,
+                Email = attendantDto.Email,
+                Family = attendantDto.Family,
+                Relationship = attendantDto.Relationship,
+                PhoneNumber = attendantDto.PhoneNumber,
+                Url = attendantDto.Url,
+            };
+
+            var result = await _userManager.CreateAsync(user, attendantDto.Password);
             if (!result.Succeeded)
             {
                 var errors = string.Join(",", result.Errors.Select(e => e.Description));
-                _logger.LogError($"Failed to create {attendant.email}, Errors:{errors}");
+                _logger.LogError($"Failed to create {attendantDto.Email}, Errors:{errors}");
             }
             return result;
+
         }
+
     }
 }
+
+
+

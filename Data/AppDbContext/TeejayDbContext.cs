@@ -14,8 +14,9 @@ namespace Data.AppDbContext
         public TeejayDbContext(DbContextOptions<TeejayDbContext> options) : base(options)
         {
         }
+        
 
-        public DbSet<Attendant> WeddingAttendants { get; set; }
+        public DbSet<Attendant> Attendants { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
