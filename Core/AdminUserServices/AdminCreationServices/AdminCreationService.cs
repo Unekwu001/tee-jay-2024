@@ -21,19 +21,6 @@ namespace Core.AdminUserServices.AdminCreationServices
             _logger = logger;
         }
 
-        //public async Task<IdentityResult> CreateAdminUserAsync(AdminUser adminUser, string password)
-        //{
-        //    var result = await _userManager.CreateAsync(adminUser, password);
-
-        //    if (!result.Succeeded)
-        //    {
-        //        var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-        //        _logger.LogWarning("Failed to create user '{Email}'. Errors: {Errors}", adminUser.Email, errors);
-        //    }
-
-        //    return result;
-        //}
-
         public async Task<IdentityResult> CreateUserAsync(AdminUserDto adminUserDto)
         {
             var user = new AdminUser

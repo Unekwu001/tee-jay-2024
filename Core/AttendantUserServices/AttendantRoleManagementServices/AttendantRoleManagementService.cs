@@ -4,14 +4,9 @@ using Data.Enums;
 using Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Core.AdminUserServices.RoleManagementServices.AdminRoleManagementService;
 
-namespace Core.AttendatUserServices.RoleManagementServices
+
+namespace Core.AttendantUserServices.AttendantRoleManagementServices
 {
     public class AttendantRoleManagementService : IAttendantRoleManagementService
     {

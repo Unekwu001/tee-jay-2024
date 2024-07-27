@@ -1,7 +1,7 @@
 ﻿using Data.Dtos;
 using Microsoft.AspNetCore.Identity;
 
-namespace Core.AttendatUserServices.RoleManagementServices
+namespace Core.AttendantUserServices.AttendantRoleManagementServices
 {
     public interface IAttendantRoleManagementService
     {

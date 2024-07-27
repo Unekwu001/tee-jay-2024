@@ -1,16 +1,16 @@
-
 using API;
 using Core.AdminUserServices;
 using Core.AdminUserServices.AdminCreationServices;
 using Core.AdminUserServices.RoleManagementServices;
+using Core.AttendantUserServices;
 using Core.AttendantUserServices.AttendantCreationServices;
-using Core.AttendatUserServices.RoleManagementServices;
+using Core.AttendantUserServices.AttendantRoleManagementServices;
 using Data.AppDbContext;
 using Data.Enums;
 using Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging.Configuration;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
 
@@ -22,27 +22,40 @@ namespace TeeJay
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Configure Serilog
             builder.Host.UseSerilog((context, LoggerConfig) => LoggerConfig.ReadFrom.Configuration(context.Configuration));
+
+            // Register services
             builder.Services.AddScoped<IAdminCreationService, AdminCreationService>();
             builder.Services.AddScoped<IAdminRoleManagementService, AdminRoleManagementService>();
-            builder.Services.AddScoped<IAttendantCreationService, AttendantCreationService>();
-            builder.Services.AddScoped<IAttendantRoleManagementService, AttendantRoleManagementService>();
+            //builder.Services.AddScoped<IAttendantCreationService, AttendantCreationService>();
+            builder.Services.AddScoped<IAttendantOnboardingService, AttendantOnboardingService>();
 
             builder.Services.AddControllers();
             builder.Services.AddAutoMapper(typeof(MappingProfile));
-            builder.Services.AddIdentity<AdminUser, IdentityRole>().AddEntityFrameworkStores<TeejayDbContext>()
-                            .AddDefaultTokenProviders();
+
             var connectionString = builder.Configuration.GetConnectionString("TeeJayConnection");
-            object value = builder.Services.AddDbContext<TeejayDbContext>(options =>
+            builder.Services.AddDbContext<TeejayDbContext>(options =>
                 options.UseSqlServer(connectionString));
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+            // Configure Identity for AdminUser and Attendant
+            builder.Services.AddIdentity<AdminUser, IdentityRole>(options => options.User.RequireUniqueEmail = true)
+                .AddEntityFrameworkStores<TeejayDbContext>()
+                .AddDefaultTokenProviders();
+
+
+
+            //Use same userManager and roleManager for Attendant
+            builder.Services.AddScoped<UserManager<AdminUser>>();
+            builder.Services.AddScoped<RoleManager<IdentityRole>>();
+
+            // Configure Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Configure the HTTP request pipeline
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -50,51 +63,10 @@ namespace TeeJay
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
 
-            // Seed roles
-            await CreateRoles(app.Services);
-
             app.Run();
-
-            static async Task CreateRoles(IServiceProvider serviceProvider)
-            {
-                using var scope = serviceProvider.CreateScope();
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-                //string[] roles = { "SuperAdmin", "Regular", "Admin" };
-                string[] roles = Enum.GetNames(typeof(UserRole));
-                foreach (var role in roles)
-                {
-                    if (!await roleManager.RoleExistsAsync(role))
-                    {
-                        await roleManager.CreateAsync(new IdentityRole(role));
-                    }
-                }
-
-                string[] relationshipRoles = Enum.GetNames(typeof(RelationshipType));
-                string[] familyRoles = Enum.GetNames(typeof(FamilyMember));
-
-                foreach (var roleName in relationshipRoles)
-                {
-                    if (!await roleManager.RoleExistsAsync(roleName))
-                    {
-                        await roleManager.CreateAsync(new IdentityRole(roleName));
-                    }
-                }
-
-                foreach (var roleName in familyRoles)
-                {
-                    if (!await roleManager.RoleExistsAsync(roleName))
-                    {
-                        await roleManager.CreateAsync(new IdentityRole(roleName));
-                    }
-                }
-            }
         }
     }
 }

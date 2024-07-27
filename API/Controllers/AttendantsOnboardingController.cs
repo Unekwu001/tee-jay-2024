@@ -1,53 +1,45 @@
-﻿using Data.AppDbContext;
+﻿using Core.AttendantUserServices;
 using Data.Dtos;
-using Data.Enums;
-using Data.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-[ApiController]
-[Route("api/[controller]")]
-public class AttendantController : ControllerBase
+namespace API.Controllers
 {
-    private readonly TeejayDbContext _context;
-
-    public AttendantController(TeejayDbContext context)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AttendantController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly IAttendantOnboardingService _attendantOnboardingService;
+        private readonly ILogger<AttendantController> _logger;
 
-    [HttpPost("onboard")]
-    public async Task<IActionResult> OnboardAttendant([FromBody] AttendantDto attendantDto)
-    {
-        var attendant = new Attendant
+        public AttendantController(IAttendantOnboardingService attendantOnboardingService, ILogger<AttendantController> logger)
         {
-            Id = Guid.NewGuid(),
-            FirstName = attendantDto.FirstName,
-            LastName = attendantDto.LastName,
-            Family = attendantDto.Family,
-            Relationship = attendantDto.Relationship,
-            PhoneNumber = attendantDto.PhoneNumber,
-            Email = attendantDto.Email,
-            Url = attendantDto.Url
-        };
+            _attendantOnboardingService = attendantOnboardingService;
+            _logger = logger;
+        }
 
-        _context.Attendants.Add(attendant);
-        await _context.SaveChangesAsync();
+        [HttpPost]
+        public async Task<IActionResult> OnboardAttendant([FromBody] AttendantDto attendantDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("Invalid model state for AttendantDto: {ModelState}", ModelState);
+                return BadRequest(ModelState);
+            }
 
-        return Ok("Attendant onboarded successfully.");
+            _logger.LogInformation("Starting onboarding process for attendant with email: {Email}", attendantDto.Email);
+
+            var result = await _attendantOnboardingService.OnboardAttendantAsync(attendantDto);
+
+            if (!result)
+            {
+                _logger.LogWarning("Failed to onboard attendant. Email already exists: {Email}", attendantDto.Email);
+                return Conflict("Email already exists.");
+            }
+
+            _logger.LogInformation("Successfully onboarded attendant with email: {Email}", attendantDto.Email);
+            return Ok("Attendant onboarded successfully.");
+        }
     }
 }
-
-//public class AttendantDto
-//{
-//    public string FirstName { get; set; }
-//    public string LastName { get; set; }
-//    public FamilyMember Family { get; set; }
-//    public RelationshipType Relationship { get; set; }
-//    public string PhoneNumber { get; set; }
-//    public string Email { get; set; }
-//    public string Url { get; set; }
-//}
