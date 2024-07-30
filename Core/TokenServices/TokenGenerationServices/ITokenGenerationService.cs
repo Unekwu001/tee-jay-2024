@@ -2,7 +2,7 @@
 
 namespace Core.TokenServices.TokenGenerationService
 {
-    public interface ITokenService
+    public interface ITokenGenerationService
     {
         List<Token> GenerateTokens(int numberOfTokens);
     }

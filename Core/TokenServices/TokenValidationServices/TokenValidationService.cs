@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Core.TokenServices.TokenValidationService
 {
-    public class TokenValidation : ITokenValidation
+    public class TokenValidationService : ITokenValidationService
     {
         private readonly TeejayDbContext _context;
 
-        public TokenValidation(TeejayDbContext context)
+        public TokenValidationService(TeejayDbContext context)
         {
             _context = context;
         }

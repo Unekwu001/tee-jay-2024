@@ -1,6 +1,6 @@
 ﻿namespace Core.TokenServices.TokenValidationService
 {
-    public interface ITokenValidation
+    public interface ITokenValidationService
     {
         bool ValidateToken(string tokenValue);
     }

@@ -1,19 +1,15 @@
 ﻿using Data.AppDbContext;
 using Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Core.TokenServices.TokenGenerationService
 {
-    public class TokenService : ITokenService
+    public class TokenGenerationService : ITokenGenerationService
     {
         private readonly TeejayDbContext _context;
         private static readonly Random _random = new Random();
 
-        public TokenService(TeejayDbContext context)
+        public TokenGenerationService(TeejayDbContext context)
         {
             _context = context;
         }
@@ -40,9 +36,17 @@ namespace Core.TokenServices.TokenGenerationService
         private string GenerateRandomToken()
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, 8)
-              .Select(s => s[_random.Next(s.Length)]).ToArray());
+            string token;
+
+            do
+            {
+                token = new string(Enumerable.Repeat(chars, 8)
+                    .Select(s => s[_random.Next(s.Length)]).ToArray());
+            } while (!token.Any(char.IsLetter) || !token.Any(char.IsDigit));
+
+            return token;
         }
+
 
 
     }

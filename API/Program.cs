@@ -3,8 +3,8 @@ using Core.AdminUserServices;
 using Core.AdminUserServices.AdminCreationServices;
 using Core.AdminUserServices.RoleManagementServices;
 using Core.AttendantUserServices;
-using Core.AttendantUserServices.AttendantCreationServices;
-using Core.AttendantUserServices.AttendantRoleManagementServices;
+using Core.TokenServices.TokenGenerationService;
+using Core.TokenServices.TokenValidationService;
 using Data.AppDbContext;
 using Data.Enums;
 using Data.Models;
@@ -28,8 +28,11 @@ namespace TeeJay
             // Register services
             builder.Services.AddScoped<IAdminCreationService, AdminCreationService>();
             builder.Services.AddScoped<IAdminRoleManagementService, AdminRoleManagementService>();
-            //builder.Services.AddScoped<IAttendantCreationService, AttendantCreationService>();
+            // Attendant Service
             builder.Services.AddScoped<IAttendantOnboardingService, AttendantOnboardingService>();
+            // Token Services
+            builder.Services.AddScoped<ITokenGenerationService, TokenGenerationService>();
+            builder.Services.AddScoped<ITokenValidationService, TokenValidationService>();
 
             builder.Services.AddControllers();
             builder.Services.AddAutoMapper(typeof(MappingProfile));
