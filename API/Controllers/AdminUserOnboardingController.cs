@@ -31,15 +31,15 @@ namespace API.Controllers
             var result = await _adminCreationService.CreateUserAsync(adminUserDto);
             if (!result.Succeeded)
             {
-                _logger.LogWarning("Admin creation failed for '{Email}'.", adminUserDto.Email);
-                return BadRequest(result.Errors);
+                _logger.LogWarning("Admin creation failed for '{Email}'. Error:{Error}", adminUserDto.Email, result.Errors);
+                return BadRequest("Admin creation failed");
             }
 
             var roleResult = await _adminRoleManagementService.AssignRoleAsync(adminUserDto);
             if (!roleResult.Succeeded)
             {
-                _logger.LogWarning("Role assignment failed for admin '{Email}'.", adminUserDto.Email);
-                return BadRequest(roleResult.Errors);
+                _logger.LogWarning("Role assignment failed for admin '{Email}'. Error:{Error}", adminUserDto.Email, roleResult.Errors);
+                return BadRequest("Role assignment failed for admin");
             }
 
             return Ok("Admin user created and role assigned successfully.");

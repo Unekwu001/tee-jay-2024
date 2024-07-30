@@ -5,11 +5,8 @@ using Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using static Core.AdminUserServices.RoleManagementServices.AdminRoleManagementService;
 
 namespace Core.AdminUserServices.RoleManagementServices
 {
@@ -20,14 +17,12 @@ namespace Core.AdminUserServices.RoleManagementServices
         private readonly ILogger<AdminRoleManagementService> _logger;
         private readonly IMapper _mapper;
 
-        public AdminRoleManagementService(
-            UserManager<AdminUser> userManager,
-            RoleManager<IdentityRole> roleManager,
-            ILogger<AdminRoleManagementService> logger)
+        public AdminRoleManagementService(UserManager<AdminUser> userManager, RoleManager<IdentityRole> roleManager, ILogger<AdminRoleManagementService> logger, IMapper mapper)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<IdentityResult> AssignRoleAsync(AdminUserDto adminUserDto)
@@ -50,9 +45,22 @@ namespace Core.AdminUserServices.RoleManagementServices
                     }
                 }
             }
-            // Map AdminUserDto to AdminUser
-            var adminUser = _mapper.Map<AdminUser>(adminUserDto);
-            
+
+            // Retrieve the user from the database
+            var adminUser = await _userManager.FindByEmailAsync(adminUserDto.Email);
+            if (adminUser == null)
+            {
+                // Map AdminUserDto to AdminUser
+                adminUser = _mapper.Map<AdminUser>(adminUserDto);
+                var createUserResult = await _userManager.CreateAsync(adminUser, adminUserDto.Password);
+                if (!createUserResult.Succeeded)
+                {
+                    var createUserErrors = string.Join(", ", createUserResult.Errors.Select(e => e.Description));
+                    _logger.LogWarning("Failed to create user '{Email}'. Errors: {Errors}", adminUserDto.Email, createUserErrors);
+                    return IdentityResult.Failed(createUserResult.Errors.ToArray());
+                }
+            }
+
             // Assign the role to the user
             var addToRoleResult = await _userManager.AddToRoleAsync(adminUser, adminUserDto.Role.ToString());
             if (!addToRoleResult.Succeeded)
@@ -64,15 +72,5 @@ namespace Core.AdminUserServices.RoleManagementServices
 
             return IdentityResult.Success;
         }
-
     }
 }
-
-
-            // Retrieve the user from the database (you may need to adjust this based on your actual implementation)
-            //var adminUser = await _userManager.FindByEmailAsync(adminUserDto.Email);
-            //if (adminUser == null)
-            //{
-            //    _logger.LogWarning("User with email '{Email}' not found.", adminUserDto.Email);
-            //    return IdentityResult.Failed(new IdentityError { Description = "User not found" });
-            //}
