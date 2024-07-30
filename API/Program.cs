@@ -34,6 +34,7 @@ namespace TeeJay
             builder.Services.AddControllers();
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+            // Get connectionString
             var connectionString = builder.Configuration.GetConnectionString("TeeJayConnection");
             builder.Services.AddDbContext<TeejayDbContext>(options =>
                 options.UseSqlServer(connectionString));
