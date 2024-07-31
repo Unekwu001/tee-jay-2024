@@ -17,13 +17,13 @@ namespace Core.TokenServices.TokenValidationService
             _context = context;
         }
 
-        public bool ValidateToken(string tokenValue)
+        public async Task<bool> ValidateToken(string tokenValue)
         {
             var token = _context.Tokens.SingleOrDefault(t => t.Value == tokenValue && !t.IsUsed);
             if (token != null)
             {
                 token.IsUsed = true;
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return true;
             }
             return false;

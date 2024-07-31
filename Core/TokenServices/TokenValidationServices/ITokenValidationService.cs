@@ -2,6 +2,6 @@
 {
     public interface ITokenValidationService
     {
-        bool ValidateToken(string tokenValue);
+        Task<bool> ValidateToken(string tokenValue);
     }
 }
