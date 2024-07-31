@@ -28,7 +28,7 @@ namespace Core.AdminUserServices.RoleManagementServices
         public async Task<IdentityResult> AssignRoleAsync(AdminUserDto adminUserDto)
         {
             // Retrieve roles from UserRole enum
-            string[] roles = Enum.GetNames(typeof(UserRole));
+            string[] roles = Enum.GetNames(typeof(UserRoleEnum));
 
             // Create roles if they do not exist
             IdentityResult roleResult = IdentityResult.Success;

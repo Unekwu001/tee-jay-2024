@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Data.Enums
 {
-    public enum UserRole
+    public enum FamilyMemberEnum
     {
-        SuperAdmin,
-        Admin,
-        Regular
+        Bride,
+        Groom,
     }
 }

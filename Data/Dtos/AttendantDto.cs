@@ -14,8 +14,8 @@ namespace Data.Dtos
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Password { get; set; }
-        public FamilyMember Family { get; set; }
-        public RelationshipType Relationship { get; set; }
+        public FamilyMemberEnum Family { get; set; }
+        public RelationshipTypeEnum Relationship { get; set; }
         public string PhoneNumber { get; set; }
         [Required]
         [EmailAddress]

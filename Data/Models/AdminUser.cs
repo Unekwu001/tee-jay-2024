@@ -13,6 +13,6 @@ namespace Data.Models
     {
         [Required]
         public string FullName { get; set; }
-        public UserRole Role { get; set; }
+        public UserRoleEnum Role { get; set; }
     }
 }
