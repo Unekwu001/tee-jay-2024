@@ -1,20 +1,20 @@
-﻿using Data.AppDbContext;
+﻿using System.Security.Cryptography;
+using Data.AppDbContext;
 using Data.Models;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace Core.TokenServices.TokenGenerationService
 {
     public class TokenGenerationService : ITokenGenerationService
     {
         private readonly TeejayDbContext _context;
-        private static readonly Random _random = new Random();
 
         public TokenGenerationService(TeejayDbContext context)
         {
             _context = context;
         }
 
-        public List<Token> GenerateTokens(int numberOfTokens)
+        public async Task<IEnumerable<Token>> GenerateTokens(int numberOfTokens)
         {
             if (numberOfTokens <= 0 || numberOfTokens > 100)
             {
@@ -29,25 +29,35 @@ namespace Core.TokenServices.TokenGenerationService
                 tokens.Add(token);
                 _context.Tokens.Add(token);
             }
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return tokens;
         }
 
         private string GenerateRandomToken()
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            string token;
+            var tokenBytes = new byte[8];
+            var tokenChars = new char[8];
 
-            do
+            using (var rng = RandomNumberGenerator.Create())
             {
-                token = new string(Enumerable.Repeat(chars, 8)
-                    .Select(s => s[_random.Next(s.Length)]).ToArray());
-            } while (!token.Any(char.IsLetter) || !token.Any(char.IsDigit));
+                rng.GetBytes(tokenBytes);
+            }
+
+            for (int i = 0; i < tokenChars.Length; i++)
+            {
+                tokenChars[i] = chars[tokenBytes[i] % chars.Length];
+            }
+
+            string token = new string(tokenChars);
+
+            // Ensure token contains at least one letter and one digit
+            if (!token.Any(char.IsLetter) || !token.Any(char.IsDigit))
+            {
+                return GenerateRandomToken();
+            }
 
             return token;
         }
-
-
-
     }
 }
