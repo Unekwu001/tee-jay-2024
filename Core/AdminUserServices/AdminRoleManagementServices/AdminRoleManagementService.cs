@@ -40,7 +40,7 @@ namespace Core.AdminUserServices.RoleManagementServices
                     if (!roleResult.Succeeded)
                     {
                         var roleErrors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
-                        _logger.LogWarning("Failed to create role '{Role}'. Errors: {Errors}", role, roleErrors);
+                        _logger.LogError("Failed to create role '{Role}'. Errors: {Errors}", role, roleErrors);
                         return IdentityResult.Failed(roleResult.Errors.ToArray());
                     }
                 }
@@ -56,7 +56,7 @@ namespace Core.AdminUserServices.RoleManagementServices
                 if (!createUserResult.Succeeded)
                 {
                     var createUserErrors = string.Join(", ", createUserResult.Errors.Select(e => e.Description));
-                    _logger.LogWarning("Failed to create user '{Email}'. Errors: {Errors}", adminUserDto.Email, createUserErrors);
+                    _logger.LogError("Failed to create user '{Email}'. Errors: {Errors}", adminUserDto.Email, createUserErrors);
                     return IdentityResult.Failed(createUserResult.Errors.ToArray());
                 }
             }
@@ -66,7 +66,7 @@ namespace Core.AdminUserServices.RoleManagementServices
             if (!addToRoleResult.Succeeded)
             {
                 var roleErrors = string.Join(", ", addToRoleResult.Errors.Select(e => e.Description));
-                _logger.LogWarning("Failed to assign role '{Role}' to user '{Email}'. Errors: {Errors}", adminUserDto.Role, adminUserDto.Email, roleErrors);
+                _logger.LogError("Failed to assign role '{Role}' to user '{Email}'. Errors: {Errors}", adminUserDto.Role, adminUserDto.Email, roleErrors);
                 return IdentityResult.Failed(addToRoleResult.Errors.ToArray());
             }
 
