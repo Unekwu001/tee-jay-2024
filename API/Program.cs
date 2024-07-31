@@ -56,7 +56,12 @@ namespace TeeJay
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+
+
             var app = builder.Build();
+
+            // Use custom exception handling middleware
+            app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
             // Configure the HTTP request pipeline
             if (app.Environment.IsDevelopment())
