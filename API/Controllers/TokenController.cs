@@ -20,7 +20,7 @@ namespace API.Controllers
         }
 
         [HttpPost("generate")]
-        public IActionResult GenerateTokens([FromBody] int numberOfTokens)
+        public async Task<IActionResult> GenerateTokens([FromBody] int numberOfTokens)
         {
             try
             {
@@ -28,7 +28,7 @@ namespace API.Controllers
                 {
                     return BadRequest("Number of tokens should be betwenn 1 and 100");
                 }
-                var tokens = _tokenGenerationService.GenerateTokens(numberOfTokens);
+                var tokens = await _tokenGenerationService.GenerateTokens(numberOfTokens);
                 return Ok(tokens);
             }
             catch (ArgumentException ex) 
@@ -45,11 +45,11 @@ namespace API.Controllers
         }
 
         [HttpPost("validate")]
-        public IActionResult ValidateToken([FromBody] string token)
+        public async Task<IActionResult> ValidateToken([FromBody] string token)
         {
             try
             {
-                var isValid = _tokenValidationService.ValidateToken(token);
+                var isValid = await _tokenValidationService.ValidateToken(token);
                 if (!isValid)
                 {
                     return BadRequest("Invalid token");
