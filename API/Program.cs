@@ -1,18 +1,15 @@
 using API;
-using Core.AdminUserServices;
 using Core.AdminUserServices.AdminCreationServices;
 using Core.AdminUserServices.RoleManagementServices;
 using Core.AttendantUserServices;
+using Core.EmailServices;
 using Core.TokenServices.TokenGenerationService;
 using Core.TokenServices.TokenValidationService;
 using Data.AppDbContext;
-using Data.Enums;
 using Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Serilog;
-using System;
 
 namespace TeeJay
 {
@@ -33,8 +30,11 @@ namespace TeeJay
             // Token Services
             builder.Services.AddScoped<ITokenGenerationService, TokenGenerationService>();
             builder.Services.AddScoped<ITokenValidationService, TokenValidationService>();
-
+            // Email Services
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            // Add Controllers
             builder.Services.AddControllers();
+
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             var connectionString = builder.Configuration.GetConnectionString("TeeJayConnection");

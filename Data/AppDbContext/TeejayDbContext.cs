@@ -13,6 +13,7 @@ namespace Data.AppDbContext
         }
         public DbSet<Attendant> Attendants { get; set; }
         public DbSet<Token> Tokens { get; set; }
+        public DbSet<EmailSettings> EmailSettings { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
