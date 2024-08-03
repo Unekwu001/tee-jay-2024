@@ -1,4 +1,3 @@
-using API;
 using Core.AdminUserServices.AdminCreationServices;
 using Core.AdminUserServices.RoleManagementServices;
 using Core.AttendantUserServices;
@@ -7,11 +6,12 @@ using Core.TokenServices.TokenGenerationService;
 using Core.TokenServices.TokenValidationService;
 using Data.AppDbContext;
 using Data.Models;
+using Data.Seed;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
-namespace TeeJay
+namespace API
 {
     public class Program
     {
@@ -46,8 +46,6 @@ namespace TeeJay
                 .AddEntityFrameworkStores<TeejayDbContext>()
                 .AddDefaultTokenProviders();
 
-
-
             //Use same userManager and roleManager for Attendant
             builder.Services.AddScoped<UserManager<AdminUser>>();
             builder.Services.AddScoped<RoleManager<IdentityRole>>();
@@ -55,8 +53,6 @@ namespace TeeJay
             // Configure Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
-
 
             var app = builder.Build();
 
@@ -69,6 +65,9 @@ namespace TeeJay
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            // Seed Email Settings
+            EmailSettingsInitializer.SeedEmailSettings(app.Services);
 
             app.UseHttpsRedirection();
             app.UseAuthorization();

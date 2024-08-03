@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
+﻿using System.Net.Mail;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Data.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +16,10 @@ namespace Core.EmailServices
 
         public async Task SendEmailAsync(string[] recipients, string subject, string body)
         {
-            var emailSettings = await _context.EmailSettings.FirstOrDefaultAsync();
+            var emailSettings = await _context.EmailSettings
+                .OrderBy(e => e.Id) 
+                .FirstOrDefaultAsync();
+
             if (emailSettings == null)
             {
                 throw new Exception("Email settings not found");
