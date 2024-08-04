@@ -7,6 +7,7 @@ using Core.TokenServices.TokenValidationService;
 using Data.AppDbContext;
 using Data.Models;
 using Data.Seed;
+using dotenv.net;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -17,6 +18,10 @@ namespace API
     {
         public static async Task Main(string[] args)
         {
+            // Load environment variables from .env file
+            DotEnv.Load();
+
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Configure Serilog
