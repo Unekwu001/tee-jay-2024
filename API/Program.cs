@@ -6,7 +6,6 @@ using Core.TokenServices.TokenGenerationService;
 using Core.TokenServices.TokenValidationService;
 using Data.AppDbContext;
 using Data.Models;
-using Data.Seed;
 using dotenv.net;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -18,9 +17,6 @@ namespace API
     {
         public static async Task Main(string[] args)
         {
-            // Load environment variables from .env file
-            DotEnv.Load();
-
 
             var builder = WebApplication.CreateBuilder(args);
 
@@ -72,7 +68,7 @@ namespace API
             }
 
             // Seed Email Settings
-            EmailSettingsInitializer.SeedEmailSettings(app.Services);
+            //EmailSettingsInitializer.SeedEmailSettings(app.Services);
 
             app.UseHttpsRedirection();
             app.UseAuthorization();
