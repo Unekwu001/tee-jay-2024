@@ -1,4 +1,5 @@
-﻿using Data.Models;
+﻿using Data.Dtos;
+using Data.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace Core.AdminUserServices.RoleManagementServices
 {
-    public interface IRoleManagementService
+    public interface IAdminRoleManagementService
     {
-        Task<IdentityResult> AssignRoleAsync(AdminUser adminUser);
+        Task<IdentityResult> AssignRoleAsync(AdminUserDto adminUserDto);
     }
 }

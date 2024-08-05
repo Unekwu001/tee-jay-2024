@@ -22,7 +22,7 @@ namespace Data.Dtos
         public string Password { get; set; }
 
         [Required]
-        public UserRole Role { get; set; }
+        public UserRoleEnum Role { get; set; }
     }
 
 }

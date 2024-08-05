@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Data.Enums
 {
-    public enum UserRole
+    public enum UserRoleEnum
     {
         SuperAdmin,
         Admin,

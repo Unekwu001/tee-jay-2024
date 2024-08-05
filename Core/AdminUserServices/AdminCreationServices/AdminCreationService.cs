@@ -1,4 +1,5 @@
-﻿using Data.Models;
+﻿using Data.Dtos;
+using Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
@@ -20,14 +21,20 @@ namespace Core.AdminUserServices.AdminCreationServices
             _logger = logger;
         }
 
-        public async Task<IdentityResult> CreateAdminUserAsync(AdminUser adminUser, string password)
+        public async Task<IdentityResult> CreateUserAsync(AdminUserDto adminUserDto)
         {
-            var result = await _userManager.CreateAsync(adminUser, password);
+            var user = new AdminUser
+            {
+                FullName = adminUserDto.FullName,
+                UserName = adminUserDto.Email,
+                Email = adminUserDto.Email,
+            };
 
+            var result = await _userManager.CreateAsync(user, adminUserDto.Password);
             if (!result.Succeeded)
             {
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                _logger.LogWarning("Failed to create user '{Email}'. Errors: {Errors}", adminUser.Email, errors);
+                _logger.LogWarning("Failed to create user '{Email}'. Errors: {Errors}", adminUserDto.Email, errors);       
             }
 
             return result;

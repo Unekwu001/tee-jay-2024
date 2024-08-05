@@ -1,54 +1,47 @@
-using Core.AdminUserServices;
+using Core.AdminUserServices.AdminCreationServices;
+using Core.AdminUserServices.RoleManagementServices;
 using Data.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
 
-namespace WebAPI.Controllers
+
+namespace API.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
-    public class AdminUserController : ControllerBase
+    [ApiController]
+    public class AdminController : ControllerBase
     {
-        private readonly IAdminUserService _adminUserService;
-        private readonly ILogger<AdminUserController> _logger;
+        private readonly IAdminCreationService _adminCreationService;
+        private readonly IAdminRoleManagementService _adminRoleManagementService;
+        private readonly ILogger<AdminController> _logger;
 
-        public AdminUserController(IAdminUserService adminUserService, ILogger<AdminUserController> logger)
+        public AdminController(
+            IAdminCreationService adminCreationService,
+            IAdminRoleManagementService adminRoleManagementService,
+            ILogger<AdminController> logger)
         {
-            _adminUserService = adminUserService;
+            _adminCreationService = adminCreationService;
+            _adminRoleManagementService = adminRoleManagementService;
             _logger = logger;
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateAdminUser([FromBody] AdminUserDto adminUserDto)
+        public async Task<IActionResult> CreateAdmin([FromBody] AdminUserDto adminUserDto)
         {
-            if (adminUserDto == null)
+            var result = await _adminCreationService.CreateUserAsync(adminUserDto);
+            if (!result.Succeeded)
             {
-                _logger.LogWarning("AdminUserDto is null.");
-                return BadRequest("Admin user data cannot be null.");
+                _logger.LogWarning("Admin creation failed for '{Email}'. Error:{Error}", adminUserDto.Email, result.Errors);
+                return BadRequest("Admin creation failed");
             }
 
-            try
+            var roleResult = await _adminRoleManagementService.AssignRoleAsync(adminUserDto);
+            if (!roleResult.Succeeded)
             {
-                var result = await _adminUserService.CreateAdminAsync(adminUserDto);
+                _logger.LogWarning("Role assignment failed for admin '{Email}'. Error:{Error}", adminUserDto.Email, roleResult.Errors);
+                return BadRequest("Role assignment failed for admin");
+            }
 
-                if (result.Succeeded)
-                {
-                    return Ok("Admin user created successfully.");
-                }
-                else
-                {
-                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                    _logger.LogWarning("Failed to create admin user. Errors: {Errors}", errors);
-                    return BadRequest(errors);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while creating the admin user.");
-                return StatusCode(500, "Internal server error. Please try again later.");
-            }
+            return Ok("Admin user created and role assigned successfully.");
         }
     }
 }
