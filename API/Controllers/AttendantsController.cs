@@ -1,4 +1,5 @@
 ﻿using Core.AttendantUserServices;
+using Core.AttendantUserServices.LinkAttendantToTokenServices;
 using Data.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,12 +12,14 @@ namespace API.Controllers
     {
         private readonly IAttendantOnboardingService _attendantOnboardingService;
         private readonly IFetchAttendantsNameAndIdService _fetchAttendantsNameAndIdService;
+        private readonly ILinkAttendantToTokenService _linkAttendantToTokenService; 
         private readonly ILogger<AttendantController> _logger;
 
-        public AttendantController(IAttendantOnboardingService attendantOnboardingService, IFetchAttendantsNameAndIdService fetchAttendantsNameAndIdService, ILogger<AttendantController> logger)
+        public AttendantController(IAttendantOnboardingService attendantOnboardingService, IFetchAttendantsNameAndIdService fetchAttendantsNameAndIdService, ILinkAttendantToTokenService linkAttendantToTokenService, ILogger<AttendantController> logger)
         {
             _attendantOnboardingService = attendantOnboardingService;
             _fetchAttendantsNameAndIdService = fetchAttendantsNameAndIdService;
+            _linkAttendantToTokenService = linkAttendantToTokenService;
             _logger = logger;
         }
 
@@ -48,6 +51,21 @@ namespace API.Controllers
         {
             var allAttendantsNameAndId = await _fetchAttendantsNameAndIdService.FetchAllAttendantsNameAndIdAsync();
             return Ok(allAttendantsNameAndId);
+        }
+
+        [HttpPost("link-attendant-to-token")]
+        public async Task<IActionResult> LinkAttendantToToken(string attendantId, string tokenId)
+        {
+            if(attendantId == null || tokenId == null)
+            {
+                return BadRequest("AttendantId or TokenId not specified");
+            }
+            var result = await _linkAttendantToTokenService.LinkAttendantToToken(attendantId, tokenId);  
+            if (!result)
+            {
+                return NotFound("Error linking token to attendant");
+            }
+            return Ok(result);
         }
     }
 }

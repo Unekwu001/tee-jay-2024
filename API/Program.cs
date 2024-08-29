@@ -1,6 +1,7 @@
 using Core.AdminUserServices.AdminCreationServices;
 using Core.AdminUserServices.RoleManagementServices;
 using Core.AttendantUserServices;
+using Core.AttendantUserServices.LinkAttendantToTokenServices;
 using Core.EmailServices;
 using Core.TokenServices.FetchValidTokenServices;
 using Core.TokenServices.TokenGenerationService;
@@ -29,6 +30,7 @@ namespace API
             // Attendant Service
             builder.Services.AddScoped<IFetchAttendantsNameAndIdService, FetchAttendantsNameAndIdService>();
             builder.Services.AddScoped<IAttendantOnboardingService, AttendantOnboardingService>();
+            builder.Services.AddScoped<ILinkAttendantToTokenService, LinkAttendantToTokenService>();    
             // Token Services
             builder.Services.AddScoped<ITokenGenerationService, TokenGenerationService>();
             builder.Services.AddScoped<ITokenValidationService, TokenValidationService>();

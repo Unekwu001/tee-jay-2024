@@ -16,12 +16,13 @@ namespace Core.AttendantUserServices.LinkAttendantToTokenServices
             _context = context;
         }
 
-        public async Task<bool> LinkAttendantToToken(Guid attendantId, Guid tokenId)
+        public async Task<bool> LinkAttendantToToken(string attendantId, string tokenId)
         {
-            var attendant = _context.Attendants.FirstOrDefault(a => a.Id == attendantId);
+            var attendant = _context.Attendants.FirstOrDefault(a => a.Id.ToString() == attendantId);
             if (attendant != null)
             {
                 attendant.TokenId = tokenId.ToString();
+                await _context.SaveChangesAsync();
                 return true;
             }
             return false;
