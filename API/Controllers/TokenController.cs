@@ -1,5 +1,7 @@
-﻿using Core.TokenServices.TokenGenerationService;
+﻿using Core.TokenServices.FetchValidTokenServices;
+using Core.TokenServices.TokenGenerationService;
 using Core.TokenServices.TokenValidationService;
+using Data.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -10,12 +12,14 @@ namespace API.Controllers
     {
         private readonly ITokenGenerationService _tokenGenerationService;
         private readonly ITokenValidationService _tokenValidationService;
+        private readonly IFetchValidTokens _fetchValidTokens;
         private readonly ILogger<TokenController> _logger;
 
-        public TokenController(ITokenGenerationService tokenGenerationService, ITokenValidationService tokenValidationService, ILogger<TokenController> logger)
+        public TokenController(ITokenGenerationService tokenGenerationService, ITokenValidationService tokenValidationService, ILogger<TokenController> logger, IFetchValidTokens fetchValidTokens)
         {
             _tokenGenerationService = tokenGenerationService;
             _tokenValidationService = tokenValidationService;
+            _fetchValidTokens = fetchValidTokens;
             _logger = logger;
         }
 
@@ -62,5 +66,13 @@ namespace API.Controllers
                 return BadRequest( "An error occured while validating token");  
             }
         }
+        [HttpGet("get-all-valid-tokens")]
+        public async Task<IActionResult> GetAllValidTokensAsync()
+        {
+            var allValidTokens = await _fetchValidTokens.FetchValidTokensAsync();
+            return Ok(allValidTokens);
+        }
+
+
     }
 }
