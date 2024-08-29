@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Data.AppDbContext;
+﻿using Data.AppDbContext;
 using Data.Dtos;
 using Data.Models;
 using Microsoft.Extensions.Logging;
