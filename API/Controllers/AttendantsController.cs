@@ -23,7 +23,7 @@ namespace API.Controllers
             _logger = logger;
         }
 
-        [HttpPost]
+        [HttpPost("onboard-attendant")]
         public async Task<IActionResult> OnboardAttendant([FromBody] AttendantDto attendantDto)
         {
             if (!ModelState.IsValid)
@@ -46,7 +46,7 @@ namespace API.Controllers
             return Ok("Attendant onboarded successfully.");
         }
 
-        [HttpGet]
+        [HttpGet("get-all-attendants-name-and-id")]
         public async Task<IActionResult> GetAllAttendantsNameAndId()
         {
             var allAttendantsNameAndId = await _fetchAttendantsNameAndIdService.FetchAllAttendantsNameAndIdAsync();
@@ -65,7 +65,7 @@ namespace API.Controllers
             {
                 return NotFound("Error linking token to attendant");
             }
-            return Ok(result);
+            return Ok("Token Linked to Attendant Succefully");
         }
     }
 }
