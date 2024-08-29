@@ -7,7 +7,6 @@ using Core.TokenServices.TokenGenerationService;
 using Core.TokenServices.TokenValidationService;
 using Data.AppDbContext;
 using Data.Models;
-using dotenv.net;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -28,6 +27,7 @@ namespace API
             builder.Services.AddScoped<IAdminCreationService, AdminCreationService>();
             builder.Services.AddScoped<IAdminRoleManagementService, AdminRoleManagementService>();
             // Attendant Service
+            builder.Services.AddScoped<IFetchAttendantsNameAndIdService, FetchAttendantsNameAndIdService>();
             builder.Services.AddScoped<IAttendantOnboardingService, AttendantOnboardingService>();
             // Token Services
             builder.Services.AddScoped<ITokenGenerationService, TokenGenerationService>();

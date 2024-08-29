@@ -1,8 +1,7 @@
 ﻿using Core.AttendantUserServices;
 using Data.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
+
 
 namespace API.Controllers
 {
@@ -11,11 +10,13 @@ namespace API.Controllers
     public class AttendantController : ControllerBase
     {
         private readonly IAttendantOnboardingService _attendantOnboardingService;
+        private readonly IFetchAttendantsNameAndIdService _fetchAttendantsNameAndIdService;
         private readonly ILogger<AttendantController> _logger;
 
-        public AttendantController(IAttendantOnboardingService attendantOnboardingService, ILogger<AttendantController> logger)
+        public AttendantController(IAttendantOnboardingService attendantOnboardingService, IFetchAttendantsNameAndIdService fetchAttendantsNameAndIdService, ILogger<AttendantController> logger)
         {
             _attendantOnboardingService = attendantOnboardingService;
+            _fetchAttendantsNameAndIdService = fetchAttendantsNameAndIdService;
             _logger = logger;
         }
 
@@ -40,6 +41,13 @@ namespace API.Controllers
 
             _logger.LogInformation("Successfully onboarded attendant with email: {Email}", attendantDto.Email);
             return Ok("Attendant onboarded successfully.");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllAttendantsNameAndId()
+        {
+            var allAttendantsNameAndId = await _fetchAttendantsNameAndIdService.FetchAllAttendantsNameAndIdAsync();
+            return Ok(allAttendantsNameAndId);
         }
     }
 }

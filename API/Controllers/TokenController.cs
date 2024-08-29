@@ -1,7 +1,6 @@
 ﻿using Core.TokenServices.FetchValidTokenServices;
 using Core.TokenServices.TokenGenerationService;
 using Core.TokenServices.TokenValidationService;
-using Data.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers

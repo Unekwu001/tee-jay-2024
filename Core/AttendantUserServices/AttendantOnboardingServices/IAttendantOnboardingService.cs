@@ -1,5 +1,4 @@
 ﻿using Data.Dtos;
-using Data.Models;
 
 namespace Core.AttendantUserServices
 {

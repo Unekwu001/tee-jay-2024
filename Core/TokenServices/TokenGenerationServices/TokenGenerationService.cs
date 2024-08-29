@@ -1,7 +1,6 @@
 ﻿using System.Security.Cryptography;
 using Data.AppDbContext;
 using Data.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Core.TokenServices.TokenGenerationService
 {
