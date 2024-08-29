@@ -8,14 +8,14 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AttendantController : ControllerBase
+    public class AttendantsController : ControllerBase
     {
         private readonly IAttendantOnboardingService _attendantOnboardingService;
         private readonly IFetchAttendantsNameAndIdService _fetchAttendantsNameAndIdService;
         private readonly ILinkAttendantToTokenService _linkAttendantToTokenService; 
-        private readonly ILogger<AttendantController> _logger;
+        private readonly ILogger<AttendantsController> _logger;
 
-        public AttendantController(IAttendantOnboardingService attendantOnboardingService, IFetchAttendantsNameAndIdService fetchAttendantsNameAndIdService, ILinkAttendantToTokenService linkAttendantToTokenService, ILogger<AttendantController> logger)
+        public AttendantsController(IAttendantOnboardingService attendantOnboardingService, IFetchAttendantsNameAndIdService fetchAttendantsNameAndIdService, ILinkAttendantToTokenService linkAttendantToTokenService, ILogger<AttendantsController> logger)
         {
             _attendantOnboardingService = attendantOnboardingService;
             _fetchAttendantsNameAndIdService = fetchAttendantsNameAndIdService;
@@ -63,7 +63,7 @@ namespace API.Controllers
             var result = await _linkAttendantToTokenService.LinkAttendantToToken(attendantId, tokenId);  
             if (!result)
             {
-                return NotFound("Error linking token to attendant");
+                return NotFound("Attendant is null or token is already used");
             }
             return Ok("Token Linked to Attendant Succefully");
         }
