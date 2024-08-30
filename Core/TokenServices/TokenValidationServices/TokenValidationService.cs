@@ -1,4 +1,5 @@
 ﻿using Data.AppDbContext;
+using Microsoft.Extensions.Logging;
 
 
 namespace Core.TokenServices.TokenValidationService
@@ -6,22 +7,30 @@ namespace Core.TokenServices.TokenValidationService
     public class TokenValidationService : ITokenValidationService
     {
         private readonly TeejayDbContext _context;
-
-        public TokenValidationService(TeejayDbContext context)
+        private readonly ILogger _logger;
+        public TokenValidationService(TeejayDbContext context, ILogger logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<bool> ValidateToken(string tokenValue)
         {
-            var token = _context.Tokens.SingleOrDefault(t => t.Value == tokenValue && !t.IsUsed);
-            if (token != null)
+            try
             {
-                token.IsUsed = true;
-                await _context.SaveChangesAsync();
+                var token = _context.Tokens.SingleOrDefault(t => t.Value == tokenValue && !t.IsUsed);
+                if (token == null)
+                {
+                    return false;
+                }
                 return true;
+
             }
-            return false;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return false;
+            }
         }
     }
 }

@@ -60,7 +60,7 @@ namespace API.Controllers
                 {
                     return BadRequest("Invalid token");
                 }
-                return Ok(isValid);
+                return Ok("Token is still valid");
             }
             catch (Exception ex)
             {
