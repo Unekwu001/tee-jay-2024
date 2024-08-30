@@ -63,6 +63,7 @@ namespace API.Controllers
             var result = await _linkAttendantToTokenService.LinkAttendantToToken(attendantId, tokenId);  
             if (!result)
             {
+                _logger.LogError("Attendant is null or token is already used");
                 return NotFound("Attendant is null or token is already used");
             }
             return Ok("Token Linked to Attendant Succefully");

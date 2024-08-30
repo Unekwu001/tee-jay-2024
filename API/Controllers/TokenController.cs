@@ -1,6 +1,7 @@
 ﻿using Core.TokenServices.FetchValidTokenServices;
 using Core.TokenServices.TokenGenerationService;
 using Core.TokenServices.TokenValidationService;
+using Core.TokenServices.UseTokenServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -12,13 +13,15 @@ namespace API.Controllers
         private readonly ITokenGenerationService _tokenGenerationService;
         private readonly ITokenValidationService _tokenValidationService;
         private readonly IFetchValidTokens _fetchValidTokens;
+        private readonly IUseTokenService _useTokenService;
         private readonly ILogger<TokenController> _logger;
 
-        public TokenController(ITokenGenerationService tokenGenerationService, ITokenValidationService tokenValidationService, ILogger<TokenController> logger, IFetchValidTokens fetchValidTokens)
+        public TokenController(ITokenGenerationService tokenGenerationService, ITokenValidationService tokenValidationService, IFetchValidTokens fetchValidTokens, IUseTokenService useTokenService, ILogger<TokenController> logger)
         {
             _tokenGenerationService = tokenGenerationService;
             _tokenValidationService = tokenValidationService;
             _fetchValidTokens = fetchValidTokens;
+            _useTokenService = useTokenService;
             _logger = logger;
         }
 
@@ -66,10 +69,49 @@ namespace API.Controllers
             }
         }
         [HttpGet("get-all-valid-tokens")]
-        public async Task<IActionResult> GetAllValidTokensAsync()
+        public async Task<IActionResult> GetAllValidTokens()
         {
-            var allValidTokens = await _fetchValidTokens.FetchValidTokensAsync();
-            return Ok(allValidTokens);
+            try
+            {
+                var allValidTokens = await _fetchValidTokens.FetchValidTokensAsync();
+                if (allValidTokens == null)
+                {
+                    return BadRequest("Couldnt fetch all valid tokens");
+                }
+                return Ok(allValidTokens);
+
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError(ex, "couldnt fetch all valid tokens");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("use-token")]
+        public async Task<IActionResult> UseToken(string tokenValue)
+        {
+            try
+            {
+
+                if (tokenValue == null)
+                {
+                    return BadRequest("Token is null");
+                }
+                var result = await _useTokenService.UseTokenAsync(tokenValue);
+                if (!result)
+                {
+                    return BadRequest("Token is null, is used or is not linked to an attendant yet");
+                }
+                return Ok("You are Welcome! To TeeJay2024");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Something went wrong when using token");
+                return BadRequest("Something went wrong when using token");
+            }
+
         }
 
 

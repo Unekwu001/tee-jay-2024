@@ -6,6 +6,7 @@ using Core.EmailServices;
 using Core.TokenServices.FetchValidTokenServices;
 using Core.TokenServices.TokenGenerationService;
 using Core.TokenServices.TokenValidationService;
+using Core.TokenServices.UseTokenServices;
 using Data.AppDbContext;
 using Data.Models;
 using Microsoft.AspNetCore.Identity;
@@ -35,6 +36,7 @@ namespace API
             builder.Services.AddScoped<ITokenGenerationService, TokenGenerationService>();
             builder.Services.AddScoped<ITokenValidationService, TokenValidationService>();
             builder.Services.AddScoped<IFetchValidTokens, FetchValidTokens>();
+            builder.Services.AddScoped<IUseTokenService, UseTokenService>();    
             // Email Services
             builder.Services.AddScoped<IEmailService, EmailService>();
             // Add Controllers
