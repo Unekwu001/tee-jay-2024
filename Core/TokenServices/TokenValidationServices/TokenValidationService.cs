@@ -7,8 +7,8 @@ namespace Core.TokenServices.TokenValidationService
     public class TokenValidationService : ITokenValidationService
     {
         private readonly TeejayDbContext _context;
-        private readonly ILogger _logger;
-        public TokenValidationService(TeejayDbContext context, ILogger logger)
+        private readonly ILogger<ITokenValidationService> _logger;
+        public TokenValidationService(TeejayDbContext context, ILogger<ITokenValidationService> logger)
         {
             _context = context;
             _logger = logger;
